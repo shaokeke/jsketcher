@@ -75,7 +75,7 @@
   },
   "dependencies": {
     "@tarikjabiri/dxf": "^2.3.2",
-    "@types/three": "^0.143.0",
+    "@types/three": "^0.163.0",
     "classnames": "2.2.5",
     "clipper-lib": "6.2.1",
     "earcut": "2.1.1",
@@ -96,7 +96,7 @@
     "react-icons": "^4.4.0",
     "react-toastify": "^5.5.0",
     "sprintf": "0.1.5",
-    "three": "^0.143.0",
+    "three": "^0.163.0",
     "browser-xml2js": "^0.4.19"
   }
 }

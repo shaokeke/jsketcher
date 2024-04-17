@@ -1,13 +1,14 @@
-import Vector, {AXIS, ORIGIN} from 'math/vector';
-import {RiCamera2Line} from "react-icons/ri";
-import {ViewMode} from "cad/scene/viewer";
-import {GiCube, HiCube, HiOutlineCube} from "react-icons/all";
+import Vector, { AXIS, ORIGIN } from "math/vector";
+import { RiCamera2Line } from "react-icons/ri";
+import { ViewMode } from "cad/scene/viewer";
+import { GiCube } from "react-icons/gi";
+import { HiCube, HiOutlineCube } from "react-icons/hi";
 
 const NEG_X = AXIS.X.negate();
 const NEG_Y = AXIS.Y.negate();
 const NEG_Z = AXIS.Z.negate();
-const DIR_3_WAY_VIEW =  new Vector(1, 1, 1).normalize();
-const DIR_3_WAY_BACK_VIEW =  new Vector(-1, 1, -1).normalize();
+const DIR_3_WAY_VIEW = new Vector(1, 1, 1).normalize();
+const DIR_3_WAY_BACK_VIEW = new Vector(-1, 1, -1).normalize();
 
 export function lookAtFace(viewer, face, currFace) {
   const dist = currFace ? currFace.csys.origin.distanceTo(viewer.sceneSetup.camera.position) : undefined;
@@ -21,18 +22,18 @@ function faceAt(shells, shell, pos) {
     let i = shellIndex;
     do {
       i = (i + 1) % shells.length;
-      shell = shells[i]; 
-    } while(shellIndex !== i && shell.faces.length === 0);
+      shell = shells[i];
+    } while (shellIndex !== i && shell.faces.length === 0);
     return shell.faces[0];
   } else if (pos < 0) {
     let i = shellIndex;
     do {
       i = (i - 1 + shells.length) % shells.length;
       shell = shells[i];
-    } while(shellIndex !== i && shell.faces.length === 0);
+    } while (shellIndex !== i && shell.faces.length === 0);
     return shell.faces[shell.faces.length - 1];
   } else {
-    return shell.faces[pos];  
+    return shell.faces[pos];
   }
 }
 
@@ -41,7 +42,7 @@ function getCurrentSelectedOrFirstFace(ctx) {
   if (!face) {
     for (const shell of ctx.services.cadRegistry.shells) {
       if (shell.faces.length !== 0) {
-        return shell.faces[0]; 
+        return shell.faces[0];
       }
     }
   }
@@ -50,37 +51,37 @@ function getCurrentSelectedOrFirstFace(ctx) {
 
 export default [
   {
-    id: 'ZoomIn',
-    invoke: ctx => {
+    id: "ZoomIn",
+    invoke: (ctx) => {
       ctx.services.viewer.zoomIn();
       ctx.services.viewer.requestRender();
-    }
+    },
   },
   {
-    id: 'ZoomOut',
-    invoke: ctx => {
+    id: "ZoomOut",
+    invoke: (ctx) => {
       ctx.services.viewer.zoomOut();
       ctx.services.viewer.requestRender();
-    }
-  },  
+    },
+  },
   {
-    id: 'LookAtFace',
+    id: "LookAtFace",
     appearance: {
       icon: RiCamera2Line,
-      info: 'move camera to show selected face',
-      label: 'Look at'
+      info: "move camera to show selected face",
+      label: "Look at",
     },
 
-    invoke: ctx => {
+    invoke: (ctx) => {
       const face = ctx.services.selection.face.single;
       if (face) {
         lookAtFace(ctx.services.viewer, face);
       }
-    }
+    },
   },
   {
-    id: 'CycleFacesNext',
-    invoke: ctx => {
+    id: "CycleFacesNext",
+    invoke: (ctx) => {
       const face = getCurrentSelectedOrFirstFace(ctx);
       if (face) {
         const index = face.shell.faces.indexOf(face);
@@ -88,11 +89,11 @@ export default [
         ctx.services.pickControl.pick(nextFace);
         lookAtFace(ctx.services.viewer, nextFace, face);
       }
-    }
+    },
   },
   {
-    id: 'CycleFacesPrev',
-    invoke: ctx => {
+    id: "CycleFacesPrev",
+    invoke: (ctx) => {
       const face = getCurrentSelectedOrFirstFace(ctx);
       if (face) {
         const index = face.shell.faces.indexOf(face);
@@ -100,131 +101,143 @@ export default [
         ctx.services.pickControl.pick(prevFace);
         lookAtFace(ctx.services.viewer, prevFace, face);
       }
-    }
+    },
   },
   {
-    id: 'StandardViewFront',
+    id: "StandardViewFront",
     appearance: {
-      label: 'front'
+      label: "front",
     },
-    invoke: ctx => {
+    invoke: (ctx) => {
       ctx.services.viewer.lookAt(ORIGIN, AXIS.Z, AXIS.Y, ctx.services.viewer.sceneSetup.camera.position.length());
       ctx.services.viewer.requestRender();
-    }
+    },
   },
   {
-    id: 'StandardViewBack',
+    id: "StandardViewBack",
     appearance: {
-      label: 'back'
+      label: "back",
     },
-    invoke: ctx => {
+    invoke: (ctx) => {
       ctx.services.viewer.lookAt(ORIGIN, NEG_Z, AXIS.Y, ctx.services.viewer.sceneSetup.camera.position.length());
       ctx.services.viewer.requestRender();
-    }
+    },
   },
   {
-    id: 'StandardViewLeft',
+    id: "StandardViewLeft",
     appearance: {
-      label: 'left'
+      label: "left",
     },
-    invoke: ctx => {
+    invoke: (ctx) => {
       ctx.services.viewer.lookAt(ORIGIN, NEG_X, AXIS.Y, ctx.services.viewer.sceneSetup.camera.position.length());
       ctx.services.viewer.requestRender();
-    }
+    },
   },
   {
-    id: 'StandardViewRight',
+    id: "StandardViewRight",
     appearance: {
-      label: 'right'
+      label: "right",
     },
-    invoke: ctx => {
+    invoke: (ctx) => {
       ctx.services.viewer.lookAt(ORIGIN, AXIS.X, AXIS.Y, ctx.services.viewer.sceneSetup.camera.position.length());
       ctx.services.viewer.requestRender();
-    }
+    },
   },
   {
-    id: 'StandardViewTop',
+    id: "StandardViewTop",
     appearance: {
-      label: 'top'
+      label: "top",
     },
-    invoke: ctx => {
+    invoke: (ctx) => {
       ctx.services.viewer.lookAt(ORIGIN, AXIS.Y, NEG_Z, ctx.services.viewer.sceneSetup.camera.position.length());
       ctx.services.viewer.requestRender();
-    }
+    },
   },
   {
-    id: 'StandardViewBottom',
+    id: "StandardViewBottom",
     appearance: {
-      label: 'bottom'
+      label: "bottom",
     },
-    invoke: ctx => {
+    invoke: (ctx) => {
       ctx.services.viewer.lookAt(ORIGIN, NEG_Y, AXIS.Z, ctx.services.viewer.sceneSetup.camera.position.length());
       ctx.services.viewer.requestRender();
-    }
-  },
-  {
-    id: 'StandardView3Way',
-    appearance: {
-      label: 'three way'
     },
-    invoke: ctx => {
-      ctx.services.viewer.lookAt(ORIGIN, DIR_3_WAY_VIEW, AXIS.Y, ctx.services.viewer.sceneSetup.camera.position.length());
-      ctx.services.viewer.requestRender();
-    }
   },
   {
-    id: 'StandardView3WayBack',
+    id: "StandardView3Way",
     appearance: {
-      label: 'three way back'
+      label: "three way",
     },
-    invoke: ctx => {
-      ctx.services.viewer.lookAt(ORIGIN, DIR_3_WAY_BACK_VIEW, AXIS.Y, ctx.services.viewer.sceneSetup.camera.position.length());
+    invoke: (ctx) => {
+      ctx.services.viewer.lookAt(
+        ORIGIN,
+        DIR_3_WAY_VIEW,
+        AXIS.Y,
+        ctx.services.viewer.sceneSetup.camera.position.length()
+      );
       ctx.services.viewer.requestRender();
-    }
+    },
   },
   {
-    id: 'HistoryBackward',
-    invoke: ctx => ctx.services.craft.historyTravel.backward({
-      noWizardFocus: true
-    })
-  },
-  {
-    id: 'HistoryForward',
-    invoke: ctx => ctx.services.craft.historyTravel.forward({
-      noWizardFocus: true
-    })
-  },
-  {
-    id: 'ViewMode_WIREFRAME_ON',
+    id: "StandardView3WayBack",
     appearance: {
-      label: 'wireframe',
+      label: "three way back",
+    },
+    invoke: (ctx) => {
+      ctx.services.viewer.lookAt(
+        ORIGIN,
+        DIR_3_WAY_BACK_VIEW,
+        AXIS.Y,
+        ctx.services.viewer.sceneSetup.camera.position.length()
+      );
+      ctx.services.viewer.requestRender();
+    },
+  },
+  {
+    id: "HistoryBackward",
+    invoke: (ctx) =>
+      ctx.services.craft.historyTravel.backward({
+        noWizardFocus: true,
+      }),
+  },
+  {
+    id: "HistoryForward",
+    invoke: (ctx) =>
+      ctx.services.craft.historyTravel.forward({
+        noWizardFocus: true,
+      }),
+  },
+  {
+    id: "ViewMode_WIREFRAME_ON",
+    appearance: {
+      label: "wireframe",
       icon: HiOutlineCube,
     },
-    invoke: ctx => {
+    invoke: (ctx) => {
       ctx.services.viewer.viewMode$.next(ViewMode.WIREFRAME);
       ctx.services.viewer.requestRender();
-    }
+    },
   },
   {
-    id: 'ViewMode_SHADED_ON',
+    id: "ViewMode_SHADED_ON",
     appearance: {
-      label: 'shaded',
+      label: "shaded",
       icon: HiCube,
     },
-    invoke: ctx => {
+    invoke: (ctx) => {
       ctx.services.viewer.viewMode$.next(ViewMode.SHADED);
       ctx.services.viewer.requestRender();
-    }
+    },
   },
   {
-    id: 'ViewMode_SHADED_WITH_EDGES_ON',
+    id: "ViewMode_SHADED_WITH_EDGES_ON",
     appearance: {
-      label: 'shaded with edges',
+      label: "shaded with edges",
       icon: GiCube,
     },
-    invoke: ctx => {
+    invoke: (ctx) => {
       ctx.services.viewer.viewMode$.next(ViewMode.SHADED_WITH_EDGES);
       ctx.services.viewer.requestRender();
-    }
+    },
   },
-]
+];
